@@ -1,1 +1,10 @@
+{
+  "meta": { "market": "Estonia", "month": "2025-09" },
+  "targets": { "NDCS_month": 420, "NGR_month": 260000 },
+  "daily": [
+    { "date": "2025-09-01", "casino": { "ngr": 8200, "turnover": 118000 }, "sports": { "ngr": 5200, "turnover": 88000 }, "NDCS": 11, "NRCS": 24 },
+    { "date": "2025-09-02", "casino": { "ngr": 7900, "turnover": 122000 }, "sports": { "ngr": 4800, "turnover": 91000 }, "NDCS": 12, "NRCS": 23 },
+    { "date": "2025-09-03", "casino": { "ngr": 8300, "turnover": 125000 }, "sports": { "ngr": 5600, "turnover": 95000 }, "NDCS": 10, "NRCS": 22 }
+  ]
+}
 
