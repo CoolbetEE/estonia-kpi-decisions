@@ -1,1 +1,6 @@
+ALERT CATALOG (example)
+- A1: NGR down ≥12% week-over-week
+- A2: NDCS pacing miss >15% vs linear target
+- A3: Efficiency drop (NGR/Turnover) ≥0.5pp
+- A4: Conversion NRCS→NDCS -5pp WoW
 
