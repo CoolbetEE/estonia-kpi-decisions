@@ -1,1 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estonia KPI Decision Kit</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;background:#0b1220;color:#e8eefc;margin:0;padding:0}
+    .wrap{max-width:1000px;margin:auto;padding:20px}
+    h1{font-size:26px}
+    .card{background:#0f172a;border-radius:14px;padding:20px;margin-top:16px}
+    .stat{display:inline-block;background:#0b1530;padding:8px 12px;border-radius:10px;margin:4px}
+    .badge{font-size:12px;padding:2px 6px;background:#1e2b50;border-radius:6px}
+    select{background:#1e2b50;color:#fff;border:none;border-radius:6px;padding:4px 8px}
+    table{width:100%;border-collapse:separate;border-spacing:0 8px;margin-top:8px}
+    th,td{background:#0b1530;padding:8px 10px;text-align:left;border-radius:6px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Estonia KPI Decision Kit — Demo</h1>
+    <p>Synthetic demo (no company data)</p>
+
+    <div class="card">
+      <h2>Executive One-Pager</h2>
+      <div id="headline"></div>
+      <div>
+        Scenario:
+        <select id="scenario">
+          <option value="0.9">Downside (-10%)</option>
+          <option value="1.0" selected>Base</option>
+          <option value="1.1">Stretch (+10%)</option>
+        </select>
+      </div>
+      <div id="projection"></div>
+      <div id="narrative" style="margin-top:10px"></div>
+    </div>
+
+    <div class="card">
+      <h2>Campaign ROI (Mock)</h2>
+      <table id="scorecard"></table>
+    </div>
+
+    <div class="card">
+      <h2>NDCS Cohorts (Mock)</h2>
+      <table id="cohorts"></table>
+    </div>
+  </div>
+
+<script>
+const data = {
+  meta:{market:'Estonia',month:'2025-09'},
+  targets:{NDCS_month:420,NGR_month:260000},
+  daily:Array.from({length:30},(_,i)=>({
+    date:`2025-09-${String(i+1).padStart(2,'0')}`,
+    casino:{ngr:7000+Math.random()*1500,turnover:120000+Math.random()*8000},
+    sports:{ngr:5000+Math.random()*1000,turnover:90000+Math.random()*7000},
+    NDCS:10+Math.floor(Math.random()*3),
+    NRCS:20+Math.floor(Math.random()*5)
+  }))
+};
+
+function sum(a,f){return a.reduce((x,y)=>x+f(y),0);}
+function fmt(x){return new Intl.NumberFormat('en-EE',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(x);}
+function render(){
+  const d=data.daily;
+  const ngr=sum(d,e=>e.casino.ngr+e.sports.ngr);
+  const t=sum(d,e=>e.casino.turnover+e.sports.turnover);
+  const ndcs=sum(d,e=>e.NDCS), nrcs=sum(d,e=>e.NRCS);
+  document.getElementById('headline').innerHTML=
+    `<div class="stat"><b>NGR:</b> ${fmt(ngr)}</div>
+     <div class="stat"><b>Turnover:</b> ${fmt(t)}</div>
+     <div class="stat"><b>NDCS:</b> ${ndcs}</div>
+     <div class="stat"><b>NRCS:</b> ${nrcs}</div>`;
+  const days=d.length, runRate=(ngr/days)*30, scenario=parseFloat(document.getElementById('scenario').value);
+  const proj=runRate*scenario, ndcsGap=Math.max(0,data.targets.NDCS_month-ndcs);
+  document.getElementById('projection').innerHTML=
+    `<div class="stat"><b>Run-rate NGR:</b> ${fmt(runRate)}</div>
+     <div class="stat"><b>Projected NGR:</b> ${fmt(proj)}</div>
+     <div class="stat"><b>NDCS gap:</b> ${ndcsGap}</div>`;
+  document.getElementById('narrative').textContent=
+    `Projection: ${fmt(proj)} (${scenario===1?'Base':scenario>1?'Stretch':'Downside'}).`;
+  const sc=[
+    {c:'Football Free Bet',sp:6000,nd:118,ngr:41000},
+    {c:'Slots Weekend Boost',sp:4000,nd:80,ngr:36000},
+    {c:'Casino FS Onboarding',sp:2500,nd:62,ngr:21000}
+  ];
+  document.getElementById('scorecard').innerHTML=
+    ['<tr><th>Campaign</th><th>Spend</th><th>NDCS</th><th>NGR</th><th>ROAS</th></tr>']
+    .concat(sc.map(r=>`<tr><td>${r.c}</td><td>${fmt(r.sp)}</td><td>${r.nd}</td><td>${fmt(r.ngr)}</td><td>${(r.ngr/r.sp).toFixed(1)}x</td></tr>`))
+    .join('');
+  const cohorts=[
+    {w:'W35',nd:92,d7:21000,d30:68000},
+    {w:'W36',nd:104,d7:26000,d30:74000},
+    {w:'W37',nd:86,d7:19000,d30:60000}
+  ];
+  document.getElementById('cohorts').innerHTML=
+    ['<tr><th>Week</th><th>NDCS</th><th>D7 NGR</th><th>D30 NGR</th></tr>']
+    .concat(cohorts.map(r=>`<tr><td>${r.w}</td><td>${r.nd}</td><td>${fmt(r.d7)}</td><td>${fmt(r.d30)}</td></tr>`))
+    .join('');
+}
+render();
+document.getElementById('scenario').addEventListener('change',render);
+</script>
+</body>
+</html>
 
